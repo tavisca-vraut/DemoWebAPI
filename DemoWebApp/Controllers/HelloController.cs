@@ -7,16 +7,25 @@ namespace DemoWebApp.Controllers
     [ApiController]
     public class HelloController : ControllerBase
     {
+        static List<string> ok = new List<string>() { "Hi" };
+
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "Hi" };
+            return ok.ToArray();
         }
 
         [HttpGet("{name}")]
-        public ActionResult<IEnumerable<string>> Get(string name)
+        public string Get(string name)
+        {;
+            return "Hi " + name;
+        }
+
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
         {
-            return new string[] { "Hi " + name }; 
+            ok.Add(id.ToString());
+            ok.Add(value);
         }
     }
 }

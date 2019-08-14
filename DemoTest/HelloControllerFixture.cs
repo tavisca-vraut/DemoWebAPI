@@ -22,7 +22,7 @@ namespace DemoTest
         {
             var controller = new HelloController();
 
-            controller.Get("RV").Should().BeEquivalentTo((ActionResult<IEnumerable<string>>)new string[] { "Hi RV" });
+            controller.Get("RV").Should().Be("Hi RV");
         }
     }
 }
