@@ -5,7 +5,7 @@ pipeline {
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
         choice(name: 'JOB', choices:  ['Build' , 'Test', '2'])
-        string(name: 'PROJECT', defaultValue: 'DemoWebApp
+        string(name: 'PROJECT', defaultValue: 'DemoWebApp')
     }
     stages {
         
