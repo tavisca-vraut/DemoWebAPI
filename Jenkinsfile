@@ -1,33 +1,20 @@
-pipeline 
-{
-    environment
-    {
-        PROJECT = "DemoWebAPI"
-        GIT_HTTPS_PATH = "https://github.com/tavisca-vraut/${PROJECT}.git"
-        SOLUTION_FILE_PATH = "DemoWebApp.sln"
-        TEST_FILE_PATH = "DemoTest/DemoTest.csproj"
-    }
+pipeline {
     agent any
-    stages
-    {
-        stage(construction)
-        {
-            sh "git clone ${GIT_HTTPS_PATH}"
-            sh "cd ${PROJECT}"
-        }
-        stage(build)
-        {
-            steps
-            {
-                sh "dotnet restore ${SOLUTION_FILE_PATH} --source https://api.nuget.org/v3/index.json"
-                sh "dotnet build ${SOLUTION_FILE_PATH} -p:Configuration=release -v:n"
+    parameters {
+        string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
+        string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
+        string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
+                sh 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
             }
         }
-        stage(test)
-        {
-            steps
-            {
-                sh "dotnet test ${TEST_FILE_PATH}"
+        stage('Test') {
+            steps {
+                sh'dotnet test ${TEST_PATH}'
             }
         }
     }
