@@ -4,7 +4,7 @@ pipeline {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
-        string(name: 'JOB', choices:  ['Build' , 'Test'])
+        choice(name: 'JOB', choices:  ['Build' , 'Test'])
     }
     stages {
         
