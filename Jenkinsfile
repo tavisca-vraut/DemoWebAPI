@@ -27,7 +27,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                sh 'dotnet publish -f netcoreapp2.2 -c Release'
+                sh 'dotnet publish -o ./Published'
             }
         }
     }
