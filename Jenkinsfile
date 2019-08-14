@@ -9,10 +9,6 @@ pipeline {
     stages {
         
         stage('Build') {
-            when
-            {
-                expression { params.JOB == 'Build' }
-            }
             steps {
                 sh 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
                 sh 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
