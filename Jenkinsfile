@@ -2,17 +2,19 @@ pipeline
 {
     environment
     {
-        GIT_HTTPS_PATH = "https://github.com/tavisca-vraut/DemoWebAPI.git"
+        PROJECT = "DemoWebAPI"
+        GIT_HTTPS_PATH = "https://github.com/tavisca-vraut/${PROJECT}.git"
         SOLUTION_FILE_PATH = "DemoWebApp.sln"
         TEST_FILE_PATH = "DemoTest/DemoTest.csproj"
-    }
-    parameters
-    {
-
     }
     agent any
     stages
     {
+        stage(construction)
+        {
+            sh "git clone ${GIT_HTTPS_PATH}"
+            sh "cd ${PROJECT}"
+        }
         stage(build)
         {
             steps
