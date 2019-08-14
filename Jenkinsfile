@@ -4,7 +4,8 @@ pipeline {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
-        choice(name: 'JOB', choices:  ['Build' , 'Test'])
+        choice(name: 'JOB', choices:  ['Build' , 'Test', '2'])
+        string(name: 'PROJECT', defaultValue: 'DemoWebApp
     }
     stages {
         
@@ -21,8 +22,11 @@ pipeline {
             }
             
             steps {
-                sh'dotnet test ${TEST_PATH}'
+                sh 'dotnet test ${TEST_PATH}'
             }
+        }
+        stage('Publish') {
+            sh 'dotnet publish ${SOLUTION_PATH} -f netcore2.1 -c Release'
         }
     }
 }
