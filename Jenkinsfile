@@ -27,7 +27,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                sh 'dotnet publish ${SOLUTION_PATH} -f netcore2.1 -c Release'
+                sh 'dotnet publish -f netcore2.1 -c Release'
             }
         }
     }
