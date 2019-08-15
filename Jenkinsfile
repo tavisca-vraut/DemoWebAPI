@@ -14,7 +14,7 @@ pipeline
     {
         restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
         buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
-        changeToProjectDirectory = "cd $env:PROJECT_TO_BE_PUBLISHED"
+        changeToProjectDirectory = 'cd $env:PROJECT_TO_BE_PUBLISHED'
     }
     stages 
     {
@@ -49,16 +49,16 @@ pipeline
             
             steps 
             {
-                powershell(script: "dotnet test $env:TEST_PATH")
+                powershell(script: 'dotnet test $env:TEST_PATH')
             }
         }
         stage('Publish') 
         {
             steps 
             {
-                powershell(script: "CD command: $env:changeToProjectDirectory")
-                powershell(script: "cd $env:changeToProjectDirectory")
-                powershell(script: "dotnet publish -c Release")
+                powershell(script: 'CD command: $env:changeToProjectDirectory')
+                powershell(script: 'cd $env:changeToProjectDirectory')
+                powershell(script: 'dotnet publish -c Release')
             }
         }
         stage('list current directory again')
