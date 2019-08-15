@@ -6,7 +6,7 @@ pipeline
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
-        choice(name: 'JOB', choices:  ['Build' , 'Test'])
+        choice(name: 'JOB', choices:  ['Test' , 'Build'])
         string(name: 'NUGET_REPO', defaultValue: 'https://api.nuget.org/v3/index.json')
     }
     environment
