@@ -14,6 +14,7 @@ pipeline
     {
         restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
         buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+        changeToProjectDirectory = 'cd $env:PROJECT_TO_BE_PUBLISHED'
     }
     stages 
     {
@@ -28,14 +29,14 @@ pipeline
         {
             steps {    
                 powershell(script: 'echo "-----------Commands to be executed-------------"')
-                powershell(script: 'echo "$env:restoreCommand"')
-                powershell(script: 'echo "$env:buildCommand"')
+                powershell(script: "echo '$env:restoreCommand'")
+                powershell(script: "echo '$env:buildCommand'")
                 powershell(script: 'echo "-----------End of List-------------"')
 
-                powershell(script: 'echo "*********Starting Restore and Build***************"')
-                powershell(script: '$env:restoreCommand')
-                powershell(script: '$env:buildCommand')
-                powershell(script: 'echo "***************Recovery Finish********************"')
+                powershell(script: "echo '*********Starting Restore and Build***************'")
+                powershell(script: "$env:restoreCommand")
+                powershell(script: "$env:buildCommand")
+                powershell(script: "echo '***************Recovery Finish********************'"
             }
         }
         stage('Test') 
@@ -46,15 +47,16 @@ pipeline
             }
             
             steps {
-                powershell(script: 'dotnet test $env:TEST_PATH')
+                powershell(script: "dotnet test $env:TEST_PATH")
             }
         }
         stage('Publish') 
         {
             steps 
             {
-                powershell(script: 'cd ".\\$env:PROJECT_TO_BE_PUBLISHED\\"')
-                powershell(script: 'dotnet publish -c Release')
+                powershell(script: "CD command: $env:changeToProjectDirectory")
+                powershell(script: "cd $env:changeToProjectDirectory")
+                powershell(script: "dotnet publish -c Release")
             }
         }
         stage('list current directory again')
