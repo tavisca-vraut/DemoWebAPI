@@ -71,6 +71,7 @@ pipeline
     {
         success
         {
+            powershell(script: 'echo "$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder"')
             archiveArtifacts artifacts: '$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder/*.*'
         }
     }
