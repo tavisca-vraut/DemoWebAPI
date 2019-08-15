@@ -12,9 +12,9 @@ pipeline
     }
     environment
     {
-        restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
-        buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
-        changeToProjectDirectory = 'cd $env:PROJECT_TO_BE_PUBLISHED'
+        restoreCommand = "dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO"
+        buildCommand = "dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n"
+        changeToProjectDirectory = "cd $env:PROJECT_TO_BE_PUBLISHED"
     }
     stages 
     {
