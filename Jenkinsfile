@@ -56,7 +56,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: 'CD command: $env:changeToProjectDirectory')
+                powershell(script: 'echo "CD command: $env:changeToProjectDirectory"')
                 powershell(script: 'cd $env:changeToProjectDirectory')
                 powershell(script: 'dotnet publish -c Release')
             }
