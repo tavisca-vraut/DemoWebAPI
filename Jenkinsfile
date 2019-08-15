@@ -14,6 +14,7 @@ pipeline
     {
         restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
         buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+        artifactsFolder = 'artifacts'
     }
     stages 
     {
@@ -55,7 +56,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release')
+                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release -o $env:artifactsFolder')
             }
         }
         stage('list current directory again')
