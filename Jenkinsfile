@@ -1,14 +1,11 @@
 pipeline {
     agent any
-    environment {
-        REPO_PATH = 'https://github.com/tavisca-vraut/DemoWebAPI.git'
-    }
     parameters {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
         choice(name: 'JOB', choices:  ['Build' , 'Test'])
-        string(name: 'PROJECT', defaultValue: 'DemoWebApp')
+        string(name: NUGET_REPO, defaultValue: 'https://api.nuget.org/v3/index.json')
     }
     stages {
         stage ('Testing if the powershell commands work')
@@ -16,40 +13,38 @@ pipeline {
             steps
             {
                 powershell(script: 'echo "Hello1, $env:REPO_PATH"')
-                powershell(script: 'echo "Hello2, ${params.REPO_PATH}"')
                 powershell(script: 'echo "Hello3, $env:SOLUTION_PATH"')
-                powershell(script: 'echo "Hello4, ${params.SOLUTION_PATH}"')
             }
         }
-        // stage('Echo current directory')
-        // {
-        //     steps
-        //     {
-        //         powershell 'pwd'
-        //     }
-        // }
-        // stage('Build') {
-        //     steps {
-        //         powershell 'echo "*********Starting Restore and Build***************'
-        //         powershell 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
-        //         powershell 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
-        //         powershell 'echo "***************Recovery Finish********************"'
-        //     }
-        // }
-        // stage('Test') {
-        //     when
-        //     {
-        //         expression { params.JOB == 'Test' }
-        //     }
+        stage('Echo current directory')
+        {
+            steps
+            {
+                powershell(script: 'pwd')
+            }
+        }
+        stage('Build') {
+            steps {
+                powershell(script: 'echo "*********Starting Restore and Build***************')
+                powershell(script: 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO')
+                powershell 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+                powershell 'echo "***************Recovery Finish********************"'
+            }
+        }
+        stage('Test') {
+            when
+            {
+                expression { params.JOB == 'Test' }
+            }
             
-        //     steps {
-        //         powershell 'dotnet test ${TEST_PATH}'
-        //     }
-        // }
-        // stage('Publish') {
-        //     steps {
-        //         powershell 'dotnet publish -o ./Published'
-        //     }
-        // }
+            steps {
+                powershell 'dotnet test $env:TEST_PATH'
+            }
+        }
+        stage('Publish') {
+            steps {
+                powershell 'dotnet publish -o ./Published'
+            }
+        }
     }
 }
