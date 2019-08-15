@@ -72,8 +72,7 @@ pipeline
     {
         success
         {
-            archiveArtifacts(artifacts: '**/$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder/*.*', fingerprint: true) 
-            // archiveArtifacts artifacts: './$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder/**'
+            archiveArtifacts artifacts: '**'
         }
     }
 }
