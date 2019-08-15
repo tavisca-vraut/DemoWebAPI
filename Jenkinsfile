@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        REPO_PATH = 'https://github.com/tavisca-vraut/DemoWebAPI.git'
+    }
     parameters {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
@@ -8,35 +11,39 @@ pipeline {
         string(name: 'PROJECT', defaultValue: 'DemoWebApp')
     }
     stages {
-        stage('Echo current directory')
+        stage ('Testing if the powershell commands work')
         {
-            steps
-            {
-                powershell 'pwd'
-            }
+            powershell 'echo $REPO_PATH'
         }
-        stage('Build') {
-            steps {
-                powershell '''echo "*********Starting Restore and Build***************;
-                dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json;
-                dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n;
-                echo "***************Recovery Finish********************"'''
-            }
-        }
-        stage('Test') {
-            when
-            {
-                expression { params.JOB == 'Test' }
-            }
+        // stage('Echo current directory')
+        // {
+        //     steps
+        //     {
+        //         powershell 'pwd'
+        //     }
+        // }
+        // stage('Build') {
+        //     steps {
+        //         powershell 'echo "*********Starting Restore and Build***************'
+        //         powershell 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
+        //         powershell 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
+        //         powershell 'echo "***************Recovery Finish********************"'
+        //     }
+        // }
+        // stage('Test') {
+        //     when
+        //     {
+        //         expression { params.JOB == 'Test' }
+        //     }
             
-            steps {
-                powershell 'dotnet test ${TEST_PATH}'
-            }
-        }
-        stage('Publish') {
-            steps {
-                powershell 'dotnet publish -o ./Published'
-            }
-        }
+        //     steps {
+        //         powershell 'dotnet test ${TEST_PATH}'
+        //     }
+        // }
+        // stage('Publish') {
+        //     steps {
+        //         powershell 'dotnet publish -o ./Published'
+        //     }
+        // }
     }
 }
