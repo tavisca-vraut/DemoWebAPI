@@ -71,7 +71,7 @@ pipeline
     {
         success
         {
-            archiveArtifacts artifacts: 'DemoWebApp\\artifacts'
+            archiveArtifacts artifacts: 'DemoWebApp/artifacts/*.*'
         }
     }
 }
