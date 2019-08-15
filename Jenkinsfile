@@ -15,7 +15,7 @@ pipeline {
         {
             steps
             {
-                powershell 'echo $REPO_PATH'
+                powershell(script: 'echo $REPO_PATH')
             }
         }
         // stage('Echo current directory')
