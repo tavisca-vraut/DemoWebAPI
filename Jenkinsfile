@@ -46,13 +46,16 @@ pipeline
                 powershell(script: 'dotnet publish $env:projectToBePublished -c Release -o artifacts')
             }
         }
+        stage('Archive')
+        {
+            steps
+            {
+                archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'    
+            }
+        }
     }
     post
     {
-        success
-        {
-            archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
-        }
         always
         {
             deleteDir()
