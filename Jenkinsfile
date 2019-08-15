@@ -27,8 +27,8 @@ pipeline {
             steps {
                 powershell(script: 'echo "*********Starting Restore and Build***************')
                 powershell(script: 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO')
-                powershell 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
-                powershell 'echo "***************Recovery Finish********************"'
+                powershell(script: 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n')
+                powershell(script: 'echo "***************Recovery Finish********************"')
             }
         }
         stage('Test') {
@@ -38,12 +38,12 @@ pipeline {
             }
             
             steps {
-                powershell 'dotnet test $env:TEST_PATH'
+                powershell(script: 'dotnet test $env:TEST_PATH')
             }
         }
         stage('Publish') {
             steps {
-                powershell 'dotnet publish -o ./Published'
+                powershell(script: 'dotnet publish -o ./Published')
             }
         }
     }
