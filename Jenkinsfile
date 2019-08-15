@@ -5,7 +5,7 @@ pipeline {
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
         choice(name: 'JOB', choices:  ['Build' , 'Test'])
-        string(name: NUGET_REPO, defaultValue: 'https://api.nuget.org/v3/index.json')
+        string(name: 'NUGET_REPO', defaultValue: 'https://api.nuget.org/v3/index.json')
     }
     stages {
         stage ('Testing if the powershell commands work')
