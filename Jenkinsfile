@@ -16,7 +16,9 @@ pipeline {
             steps
             {
                 powershell(script: 'echo "Hello1, $REPO_PATH"')
-                powershell(script: 'echo "Hello2, {$params.REPO_PATH}"')
+                powershell(script: 'echo "Hello2, ${params.REPO_PATH}"')
+                powershell(script: 'echo "Hello3, $SOLUTION_PATH"')
+                powershell(script: 'echo "Hello4, ${params.SOLUTION_PATH}"')
             }
         }
         // stage('Echo current directory')
