@@ -12,12 +12,12 @@ pipeline {
         {
             steps
             {
-                sh 'pwd'
+                powershell 'pwd'
             }
         }
         stage('Build') {
             steps {
-                sh '''echo "*********Starting Restore and Build***************;
+                powershell '''echo "*********Starting Restore and Build***************;
                 dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json;
                 dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n;
                 echo "***************Recovery Finish********************"'''
@@ -30,12 +30,12 @@ pipeline {
             }
             
             steps {
-                sh 'dotnet test ${TEST_PATH}'
+                powershell 'dotnet test ${TEST_PATH}'
             }
         }
         stage('Publish') {
             steps {
-                sh 'dotnet publish -o ./Published'
+                powershell 'dotnet publish -o ./Published'
             }
         }
     }
