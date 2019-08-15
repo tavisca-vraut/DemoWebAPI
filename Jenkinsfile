@@ -22,14 +22,14 @@ pipeline {
         }
         stage('Build') {
             steps {    
-                powershell(script: 'echo "Hello1, $restoreCommand"')
-                powershell(script: 'echo "Hello2, $buildCommand"')
+                powershell(script: 'echo "Hello1, $env:restoreCommand"')
+                powershell(script: 'echo "Hello2, $env:buildCommand"')
                 powershell(script: 'echo "Hello3, $env:REPO_PATH"')
                 powershell(script: 'echo "Hello4, $env:SOLUTION_PATH"')
 
                 powershell(script: 'echo "*********Starting Restore and Build***************')
-                powershell(script: $restoreCommand)
-                powershell(script: $buildCommand)
+                powershell(script: $env:restoreCommand)
+                powershell(script: $env:buildCommand)
                 powershell(script: 'echo "***************Recovery Finish********************"')
             }
         }
