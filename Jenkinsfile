@@ -72,7 +72,8 @@ pipeline
     {
         success
         {
-            archiveArtifacts artifacts: '**'
+            // archiveArtifacts artifacts: '**'
+            archiveArtifacts artifacts: './DemoWebApp/artifacts'
             deleteDir()
         }
     }
