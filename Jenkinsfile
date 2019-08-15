@@ -17,8 +17,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                def restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
-                def buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+                $restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
+                $buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
                     
                 powershell(script: 'echo "Hello1, $restoreCommand"')
                 powershell(script: 'echo "Hello2, $helloCommand"')
