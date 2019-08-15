@@ -18,13 +18,6 @@ pipeline
     }
     stages 
     {
-        stage('list current directory')
-        {
-            steps
-            {
-                powershell(script: 'ls')
-            }
-        }
         stage('Build') 
         {
             steps
@@ -59,21 +52,13 @@ pipeline
                 powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release -o $env:artifactsFolder')
             }
         }
-        stage('list current directory again')
-        {
-            steps
-            {
-                powershell(script: 'ls')
-                powershell(script: 'echo "$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder"')
-            }
-        }
     }
     post
     {
         success
         {
             // archiveArtifacts artifacts: '**'
-            archiveArtifacts artifacts: 'DemoWebApp/artifacts'
+            archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
             deleteDir()
         }
     }
