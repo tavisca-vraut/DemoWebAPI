@@ -27,7 +27,8 @@ pipeline
         }
         stage('Build') 
         {
-            steps {    
+            steps
+            {    
                 powershell(script: 'echo "-----------Commands to be executed-------------"')
                 powershell(script: "echo '$env:restoreCommand'")
                 powershell(script: "echo '$env:buildCommand'")
@@ -36,7 +37,7 @@ pipeline
                 powershell(script: "echo '*********Starting Restore and Build***************'")
                 powershell(script: "$env:restoreCommand")
                 powershell(script: "$env:buildCommand")
-                powershell(script: "echo '***************Recovery Finish********************'"
+                powershell(script: "echo '***************Recovery Finish********************'")
             }
         }
         stage('Test') 
@@ -46,7 +47,8 @@ pipeline
                 expression { params.JOB == 'Test' }
             }
             
-            steps {
+            steps 
+            {
                 powershell(script: "dotnet test $env:TEST_PATH")
             }
         }
