@@ -31,7 +31,7 @@ pipeline
         {
             when
             {
-                expression { params.JOB == 'Test' }
+                expression { params.JOB == 'Test'}
             }
             
             steps 
@@ -59,6 +59,7 @@ pipeline
         always
         {
             deleteDir()
+            unarchiveArtifacts artifacts
         }
     }
 }
