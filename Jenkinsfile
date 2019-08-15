@@ -51,7 +51,7 @@ pipeline
     {
         success
         {
-            archiveArtifacts artifacts: '$env:projectToBePublished/artifacts/**'
+            archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
             deleteDir()
         }
     }
