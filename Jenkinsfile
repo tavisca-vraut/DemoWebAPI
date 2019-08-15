@@ -8,7 +8,13 @@ pipeline {
         string(name: 'PROJECT', defaultValue: 'DemoWebApp')
     }
     stages {
-        
+        stage('Echo current directory')
+        {
+            steps
+            {
+                sh 'pwd'
+            }
+        }
         stage('Build') {
             steps {
                 sh '''echo "*********Starting Restore and Build***************;
