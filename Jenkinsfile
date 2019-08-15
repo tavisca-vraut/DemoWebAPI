@@ -1,6 +1,8 @@
-pipeline {
+pipeline 
+{
     agent any
-    parameters {
+    parameters 
+    {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
@@ -13,7 +15,8 @@ pipeline {
         restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
         buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
     }
-    stages {
+    stages 
+    {
         stage('list current directory')
         {
             steps
@@ -21,20 +24,22 @@ pipeline {
                 powershell(script: 'ls')
             }
         }
-        stage('Build') {
+        stage('Build') 
+        {
             steps {    
                 powershell(script: 'echo "-----------Commands to be executed-------------"')
-                powershell(script: 'echo "Hello1, $env:restoreCommand"')
-                powershell(script: 'echo "Hello2, $env:buildCommand"')
+                powershell(script: 'echo "$env:restoreCommand"')
+                powershell(script: 'echo "$env:buildCommand"')
                 powershell(script: 'echo "-----------End of List-------------"')
 
-                powershell(script: 'echo "*********Starting Restore and Build***************')
+                powershell(script: 'echo "*********Starting Restore and Build***************"')
                 powershell(script: '$env:restoreCommand')
                 powershell(script: '$env:buildCommand')
                 powershell(script: 'echo "***************Recovery Finish********************"')
             }
         }
-        stage('Test') {
+        stage('Test') 
+        {
             when
             {
                 expression { params.JOB == 'Test' }
@@ -44,9 +49,12 @@ pipeline {
                 powershell(script: 'dotnet test $env:TEST_PATH')
             }
         }
-        stage('Publish') {
-            steps {
-                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release')
+        stage('Publish') 
+        {
+            steps 
+            {
+                powershell(script: 'cd $env:PROJECT_TO_BE_PUBLISHED')
+                powershell(script: 'dotnet publish -c Release')
             }
         }
     }
