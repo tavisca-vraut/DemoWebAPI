@@ -71,7 +71,7 @@ pipeline
     {
         success
         {
-            archiveArtifacts artifacts: '$env:PROJECT_TO_BE_PUBLISHED\\$env:artifactsFolder'
+            archiveArtifacts artifacts: 'DemoWebApp\\artifacts'
         }
     }
 }
