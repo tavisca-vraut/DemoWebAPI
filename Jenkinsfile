@@ -52,6 +52,9 @@ pipeline
         success
         {
             archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
+        }
+        always
+        {
             deleteDir()
         }
     }
