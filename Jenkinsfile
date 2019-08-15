@@ -53,7 +53,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: 'cd $env:PROJECT_TO_BE_PUBLISHED')
+                powershell(script: 'cd ".\\$env:PROJECT_TO_BE_PUBLISHED\\"')
                 powershell(script: 'dotnet publish -c Release')
             }
         }
