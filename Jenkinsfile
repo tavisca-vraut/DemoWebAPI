@@ -13,7 +13,10 @@ pipeline {
     stages {
         stage ('Testing if the powershell commands work')
         {
-            powershell 'echo $REPO_PATH'
+            steps
+            {
+                powershell 'echo $REPO_PATH'
+            }
         }
         // stage('Echo current directory')
         // {
