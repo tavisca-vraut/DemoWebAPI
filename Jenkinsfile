@@ -55,7 +55,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release --self-contained')
+                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release')
             }
         }
         stage('list current directory again')
