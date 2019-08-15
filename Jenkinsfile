@@ -73,6 +73,7 @@ pipeline
         success
         {
             archiveArtifacts artifacts: '**'
+            deleteDir()
         }
     }
 }
