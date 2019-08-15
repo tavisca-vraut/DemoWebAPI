@@ -28,8 +28,8 @@ pipeline {
                 powershell(script: 'echo "Hello4, $env:SOLUTION_PATH"')
 
                 powershell(script: 'echo "*********Starting Restore and Build***************')
-                powershell(script: $env:restoreCommand)
-                powershell(script: $env:buildCommand)
+                powershell(script: '$env:restoreCommand')
+                powershell(script: '$env:buildCommand')
                 powershell(script: 'echo "***************Recovery Finish********************"')
             }
         }
