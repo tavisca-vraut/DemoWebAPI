@@ -11,8 +11,10 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json'
-                sh 'dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n'
+                sh '''echo "*********Starting Restore and Build***************;
+                dotnet restore ${SOLUTION_PATH} --source https://api.nuget.org/v3/index.json;
+                dotnet build ${SOLUTION_PATH} -p:Configuration=release -v:n;
+                echo "***************Recovery Finish********************"'''
             }
         }
         stage('Test') {
