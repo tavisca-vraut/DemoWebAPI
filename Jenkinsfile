@@ -51,7 +51,11 @@ pipeline
     {
         success
         {
-            archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
+            zip zipfile: 'publish.zip', 'DemoWebApp/artifacts'
+            archiveArtifacts artifacts: 'publish.zip'
+        }
+        always
+        {
             deleteDir()
         }
     }
