@@ -7,6 +7,11 @@ pipeline {
         choice(name: 'JOB', choices:  ['Build' , 'Test'])
         string(name: 'NUGET_REPO', defaultValue: 'https://api.nuget.org/v3/index.json')
     }
+    environment
+    {
+        restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
+        buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+    }
     stages {
         stage('list current directory')
         {
@@ -16,14 +21,9 @@ pipeline {
             }
         }
         stage('Build') {
-            environment
-            {
-                restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:NUGET_REPO'
-                buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
-            }
             steps {    
-                powershell(script: 'echo "Hello1, ${restoreCommand}"')
-                powershell(script: 'echo "Hello2, ${buildCommand}"')
+                powershell(script: 'echo "Hello1, $restoreCommand"')
+                powershell(script: 'echo "Hello2, $buildCommand"')
                 powershell(script: 'echo "Hello3, $env:REPO_PATH"')
                 powershell(script: 'echo "Hello4, $env:SOLUTION_PATH"')
 
