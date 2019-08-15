@@ -57,5 +57,12 @@ pipeline
                 powershell(script: 'dotnet publish -c Release')
             }
         }
+        stage('list current directory')
+        {
+            steps
+            {
+                powershell(script: 'ls')
+            }
+        }
     }
 }
