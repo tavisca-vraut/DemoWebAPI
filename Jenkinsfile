@@ -57,7 +57,7 @@ pipeline
                 powershell(script: 'dotnet publish -c Release')
             }
         }
-        stage('list current directory')
+        stage('list current directory again')
         {
             steps
             {
