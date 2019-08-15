@@ -5,6 +5,7 @@ pipeline {
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
         choice(name: 'JOB', choices:  ['Build' , 'Test'])
+        string(name: 'PROJECT_TO_BE_PUBLISHED', defaultValue: 'DemoWebApp')
         string(name: 'NUGET_REPO', defaultValue: 'https://api.nuget.org/v3/index.json')
     }
     environment
@@ -22,10 +23,10 @@ pipeline {
         }
         stage('Build') {
             steps {    
+                powershell(script: 'echo "-----------Commands to be executed-------------"')
                 powershell(script: 'echo "Hello1, $env:restoreCommand"')
                 powershell(script: 'echo "Hello2, $env:buildCommand"')
-                powershell(script: 'echo "Hello3, $env:REPO_PATH"')
-                powershell(script: 'echo "Hello4, $env:SOLUTION_PATH"')
+                powershell(script: 'echo "-----------End of List-------------"')
 
                 powershell(script: 'echo "*********Starting Restore and Build***************')
                 powershell(script: '$env:restoreCommand')
@@ -45,7 +46,7 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                powershell(script: 'dotnet publish -o ./Published')
+                powershell(script: 'dotnet publish $env:PROJECT_TO_BE_PUBLISHED -c Release')
             }
         }
     }
