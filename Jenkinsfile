@@ -64,6 +64,7 @@ pipeline
             steps
             {
                 powershell(script: 'ls')
+                powershell(script: 'echo "$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder"')
             }
         }
     }
@@ -71,7 +72,6 @@ pipeline
     {
         success
         {
-            powershell(script: 'echo "$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder"')
             archiveArtifacts artifacts: '$env:PROJECT_TO_BE_PUBLISHED/$env:artifactsFolder/*.*'
         }
     }
