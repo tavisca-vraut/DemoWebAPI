@@ -22,11 +22,6 @@ pipeline
         {
             steps
             {    
-                powershell(script: 'echo "-----------Commands to be executed-------------"')
-                powershell(script: 'echo "$env:restoreCommand"')
-                powershell(script: 'echo "$env:buildCommand"')
-                powershell(script: 'echo "-----------End of List-------------"')
-
                 powershell(script: "echo '*********Starting Restore and Build***************'")
                 powershell(script: '$env:restoreCommand')
                 powershell(script: '$env:buildCommand')
@@ -57,7 +52,6 @@ pipeline
     {
         success
         {
-            // archiveArtifacts artifacts: '**'
             archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'
             deleteDir()
         }
