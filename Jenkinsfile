@@ -67,4 +67,11 @@ pipeline
             }
         }
     }
+    post
+    {
+        success
+        {
+            archiveArtifacts artifacts: '$env:PROJECT_TO_BE_PUBLISHED\\$env:artifactsFolder'
+        }
+    }
 }
