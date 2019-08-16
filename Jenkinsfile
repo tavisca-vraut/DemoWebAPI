@@ -50,7 +50,8 @@ pipeline
         {
             steps
             {
-                archiveArtifacts artifacts: 'DemoWebApp/artifacts/**'    
+                powershell(script: 'compress-archive DemoWebApp/artifacts publish.zip -Update')
+                archiveArtifacts artifacts: 'publish.zip'    
             }
         }
     }
@@ -59,7 +60,6 @@ pipeline
         always
         {
             deleteDir()
-            unarchiveArtifacts artifacts
         }
     }
 }
