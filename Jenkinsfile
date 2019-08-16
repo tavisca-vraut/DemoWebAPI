@@ -60,13 +60,16 @@ pipeline
     {
         success
         {
-            try
+            steps
             {
-                build 'deploy-job-demoWebApi'
-            }
-            catch (hudson.AbortException e)
-            {
-                powershell '''echo "Server aborted..." '''
+                try
+                {
+                    build 'deploy-job-demoWebApi'
+                }
+                catch (hudson.AbortException e)
+                {
+                    powershell '''echo "Server aborted..." '''
+                }
             }
         }
         always
