@@ -54,21 +54,20 @@ pipeline
                 archiveArtifacts artifacts: 'publish.zip'    
             }
         }
-
+        stage('Retrieve artifact')
+        {
+            steps
+            {
+                copyArtifacts filter: 'publish.zip'
+                powershell(script: 'expand-archive publish.zip ./ -Force')
+            }
+        }
     }
     post
     {
-        success
-        {
-            build 'deploy-job-demoWebApi'
-        }
-        failure
-        {
-            powershell '''echo "Server aborted..." '''
-        }
-        always
-        {
-            deleteDir()
-        }
+        // always
+        // {
+        //     deleteDir()
+        // }
     }
 }
