@@ -58,16 +58,16 @@ pipeline
         {
             steps
             {
-                copyArtifacts filter: 'publish.zip'
+                copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
                 powershell(script: 'expand-archive publish.zip ./ -Force')
             }
         }
     }
-    post
-    {
+    // post
+    // {
         // always
         // {
         //     deleteDir()
         // }
-    }
+    // }
 }
