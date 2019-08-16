@@ -54,10 +54,14 @@ pipeline
                 archiveArtifacts artifacts: 'publish.zip'    
             }
         }
-        
+
     }
     post
     {
+        success
+        {
+            build 'deploy-job-demoWebApi'
+        }
         always
         {
             deleteDir()
