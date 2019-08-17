@@ -7,7 +7,8 @@ pipeline
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
         string(name: 'PROJECT_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
         string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
-        string(name: 'DOCKER_USERNAME', defaultValue: 'vighnesh153')
+        string(name: 'DOCKER_HUB_USERNAME')
+        string(name: 'DOCKER_HUB_PASSWORD')
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'demo-web-app-test')
         string(name: 'DOCKER_IMAGE_TAG', defaultValue: 'latest')
         choice(name: 'JOB', choices:  ['Test' , 'Build', 'Create Image'])
@@ -77,7 +78,9 @@ pipeline
         {
             steps
             {
-                powershell "echo 'docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/'"
+                // powershell "echo 'docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/'"
+                powershell "echo 'docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD}'"
+                powershell "docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD}"
                 powershell "docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/"
             }
         }
