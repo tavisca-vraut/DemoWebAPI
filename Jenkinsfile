@@ -100,7 +100,7 @@ pipeline
                 {
                     dir("${env.artifactsDirectory}")
                     {
-                        docker.withRegistry('docker.io', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                        docker.withRegistry('https://hub.docker.com/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                         {
                             CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
                         }
