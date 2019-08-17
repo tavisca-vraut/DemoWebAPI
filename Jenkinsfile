@@ -7,7 +7,10 @@ pipeline
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
         string(name: 'PROJECT_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
         string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
-        choice(name: 'JOB', choices:  ['Test' , 'Build'])
+        string(name: 'DOCKER_USERNAME', defaultValue: 'vighnesh153')
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'DemoWebAppTest')
+        string(name: 'DOCKER_IMAGE_TAG', defaultValue: 'latest')
+        choice(name: 'JOB', choices:  ['Test' , 'Build', 'Create Image'])
     }
     environment
     {
@@ -43,7 +46,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o artifacts")
+                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o artifacts --no-restore")
             }
         }
         stage('Archive')
@@ -74,7 +77,7 @@ pipeline
         {
             steps
             {
-                powershell 'docker -h'
+                powershell "docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} atrifacts/"
             }
         }
         // stage('Build image') 
