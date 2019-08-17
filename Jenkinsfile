@@ -3,7 +3,6 @@ pipeline
     agent any
     parameters 
     {
-        string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
         string(name: 'PROJECT_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
@@ -22,8 +21,6 @@ pipeline
         {
             steps
             {    
-                powershell "echo 'dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}'"
-                powershell "echo 'dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n'"
                 powershell(script: "echo '*********Starting Restore and Build***************'")
                 powershell(script: '$env:restoreCommand')
                 powershell(script: '$env:buildCommand')
@@ -66,6 +63,26 @@ pipeline
                 powershell(script: 'expand-archive publish.zip ./ -Force')
             }
         }
+        stage('Set-up for docker image creation')
+        {
+            steps
+            {
+                powershell 'mv Dockerfile artifacts'
+            }
+        }
+        // stage('Build image') 
+        // {
+        //     app = docker.build("getintodevops/hellonode")
+        // }
+
+        // stage('Push image') 
+        // {
+        //     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') 
+        //     {
+        //         app.push("${env.BUILD_NUMBER}")
+        //         app.push("latest")
+        //     }
+        // }
     }
     // post
     // {
