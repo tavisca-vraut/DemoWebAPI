@@ -33,109 +33,103 @@ pipeline
 
         artifactsDirectory = "MyArtifacts"
     }
-    stages
-    {
-        stage ('Test something')
-        {
-            steps
-            {
-                withCredentials([usernamePassword(credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
-                {
-                    powershell "echo 'Hello, ${USERNAME} . Please work'"
-                }
-            }
-        }
-    }
-    // stages 
+    // stages
     // {
-    //     stage('Build') 
-    //     {
-    //         steps
-    //         {    
-    //             powershell(script: "echo '*********Starting Restore and Build***************'")
-    //             powershell(script: '$env:restoreCommand')
-    //             powershell(script: '$env:buildCommand')
-    //             powershell(script: "echo '***************Recovery Finish********************'")
-    //         }
-    //     }
-    //     stage('Test') 
-    //     {
-    //         when
-    //         {
-    //             expression { params.JOB == 'Test'}
-    //         }
-            
-    //         steps 
-    //         {
-    //             powershell(script: "dotnet test ${env.TEST_PATH}")
-    //         }
-    //     }
-    //     stage('Publish') 
-    //     {
-    //         steps 
-    //         {
-    //             powershell(script: "dotnet publish ${env.APPLICATION_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
-    //         }
-    //     }
-    //     stage('Archive')
+    //     stage ('Test something')
     //     {
     //         steps
     //         {
-    //             // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
-    //             powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
-    //             archiveArtifacts artifacts: 'publish.zip'    
-    //         }
-    //     }
-    //     stage('Retrieve artifact')
-    //     {
-    //         steps
-    //         {
-    //             copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
-    //             powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
-    //         }
-    //     }
-    //     stage('Set-up for docker CustomImage creation')
-    //     {
-    //         steps
-    //         {
-    //             powershell "mv Dockerfile ${env.artifactsDirectory}"
-    //         }
-    //     }
-    //     stage('Build Custom Docker Image')
-    //     {
-    //         // steps
-    //         // {
-    //         //     powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.artifactsDirectory}/"
-    //         // }
-    //         steps
-    //         {
-    //             script
+    //             withCredentials([usernamePassword(credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
     //             {
-    //                 dir("${env.artifactsDirectory}")
-    //                 {
-    //                     docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
-    //                     {
-    //                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME'])
-    //                         CustomImage = docker.build("$USERNAME/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     stage('Push Docker CustomImage to DockerIO registry')
-    //     {
-    //         steps
-    //         {
-    //             // powershell "echo 'docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io'"
-    //             // powershell "docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io"
-    //             // powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
-    //             script
-    //             {
-    //                 CustomImage.push()
+    //                 powershell "echo 'Hello, ${USERNAME} . Please work'"
     //             }
     //         }
     //     }
     // }
+    stages 
+    {
+        stage('Build') 
+        {
+            steps
+            {    
+                powershell(script: "echo '*********Starting Restore and Build***************'")
+                powershell(script: '$env:restoreCommand')
+                powershell(script: '$env:buildCommand')
+                powershell(script: "echo '***************Recovery Finish********************'")
+            }
+        }
+        stage('Test') 
+        {
+            when
+            {
+                expression { params.JOB == 'Test'}
+            }
+            
+            steps 
+            {
+                powershell(script: "dotnet test ${env.TEST_PATH}")
+            }
+        }
+        stage('Publish') 
+        {
+            steps 
+            {
+                powershell(script: "dotnet publish ${env.APPLICATION_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
+            }
+        }
+        stage('Archive')
+        {
+            steps
+            {
+                // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
+                powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
+                archiveArtifacts artifacts: 'publish.zip'    
+            }
+        }
+        stage('Retrieve artifact')
+        {
+            steps
+            {
+                copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
+                powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
+            }
+        }
+        stage('Set-up for docker CustomImage creation')
+        {
+            steps
+            {
+                powershell "mv Dockerfile ${env.artifactsDirectory}"
+            }
+        }
+        stage('Build Custom Docker Image')
+        {
+            steps 
+            {
+                script 
+                {
+                    dir("${env.artifactsDirectory}") 
+                    {
+                        docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                        {
+                            withCredentials([usernamePassword(credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
+                            {
+                                powershell "echo 'Hello, ${USERNAME} . Please work'"
+                                CustomImage = docker.build("${USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Push Docker CustomImage to DockerIO registry') 
+        {
+            steps {
+                script {
+                    CustomImage.push()
+                }
+            }
+        }
+    }
     // post
     // {
     //     always
