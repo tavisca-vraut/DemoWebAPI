@@ -25,8 +25,8 @@ pipeline
                 powershell "echo 'dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}'"
                 powershell "echo 'dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n'"
                 powershell(script: "echo '*********Starting Restore and Build***************'")
-                powershell(script: "${env.restoreCommand}")
-                powershell(script: "${env.buildCommand}")
+                powershell(script: '$env:restoreCommand')
+                powershell(script: '$env:buildCommand')
                 powershell(script: "echo '***************Recovery Finish********************'")
             }
         }
