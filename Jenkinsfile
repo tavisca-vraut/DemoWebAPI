@@ -40,7 +40,9 @@ pipeline
             steps
             {
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME']])
-                powershell "echo 'Hello, $USERNAME . Please work'"
+                {
+                    powershell "echo 'Hello, $USERNAME . Please work'"   
+                }
             }
         }
     }
