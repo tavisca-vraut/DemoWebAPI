@@ -9,4 +9,4 @@ EXPOSE 80
 ARG APPLICATION_NAME="Default"
 
 # ENTRYPOINT ["dotnet", ${LaunchFile}]
-ENTRYPOINT ["dotnet", "DemoWebApp.dll"]
+ENTRYPOINT ["dotnet", "${APPLICATION_NAME}.dll"]
