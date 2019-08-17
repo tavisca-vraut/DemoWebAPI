@@ -16,8 +16,11 @@ pipeline
     environment
     {
         nugetRepository = 'https://api.nuget.org/v3/index.json'
+
         restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
         buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n"
+
+        artifactsDirectory = "MyArtifacts"
     }
     stages 
     {
@@ -47,7 +50,7 @@ pipeline
         {
             steps 
             {
-                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o artifacts --no-restore")
+                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
             }
         }
         stage('Archive')
@@ -55,7 +58,7 @@ pipeline
             steps
             {
                 // powershell "echo 'compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update'"
-                powershell "compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update"
+                powershell "compress-archive ${env.PROJECT_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
                 archiveArtifacts artifacts: 'publish.zip'    
             }
         }
@@ -64,14 +67,14 @@ pipeline
             steps
             {
                 copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
-                powershell(script: 'expand-archive publish.zip ./ -Force')
+                powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
             }
         }
         stage('Set-up for docker image creation')
         {
             steps
             {
-                powershell 'mv Dockerfile artifacts'
+                powershell "mv Dockerfile ${env.artifactsDirectory}"
             }
         }
         stage('Build docker image')
@@ -79,7 +82,7 @@ pipeline
             steps
             {
                 // powershell "echo 'docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/'"
-                powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/"
+                powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.artifactsDirectory}/"
             }
         }
         stage('Push Docker image to DockerIO registry')
@@ -105,11 +108,11 @@ pipeline
         //     }
         // }
     }
-    // post
-    // {
-        // always
-        // {
-        //     deleteDir()
-        // }
-    // }
+    post
+    {
+        always
+        {
+            deleteDir()
+        }
+    }
 }
