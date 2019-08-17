@@ -6,6 +6,6 @@ COPY . /host
 
 EXPOSE 80
 
-ARG LaunchFile
+ARG LaunchFile="Default.dll"
 
 CMD ["dotnet", LaunchFile]
