@@ -29,24 +29,11 @@ pipeline
         // DON'T EDIT UNLESS YOU KNOW WHAT YOU ARE DOING
         nugetRepository = 'https://api.nuget.org/v3/index.json'
 
-        restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
-        buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore"
+        // restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
+        // buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore"
 
         artifactsDirectory = "MyArtifacts"
     }
-    // stages
-    // {
-    //     stage ('Test something')
-    //     {
-    //         steps
-    //         {
-    //             withCredentials([usernamePassword(credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
-    //             {
-    //                 powershell "echo 'Hello, ${USERNAME} . Please work'"
-    //             }
-    //         }
-    //     }
-    // }
     stages 
     {
         stage('Build') 
@@ -54,8 +41,10 @@ pipeline
             steps
             {    
                 powershell(script: "echo '*********Starting Restore and Build***************'")
-                powershell(script: '$env:restoreCommand')
-                powershell(script: '$env:buildCommand')
+                // powershell(script: '$env:restoreCommand')
+                // powershell(script: '$env:buildCommand')
+                powershell(script: "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}")
+                powershell(script: "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore")
                 powershell(script: "echo '***************Recovery Finish********************'")
             }
         }
@@ -110,13 +99,9 @@ pipeline
                 {
                     dir("${env.APPLICATION_NAME}/${env.artifactsDirectory}") 
                     {
-                        docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
-                        {
-                            powershell "echo 'docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} .'"
-                            powershell "ls"
-                            // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}", " .")
-                            powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ."
-                        }
+                        // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                        // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}", " .")
+                        powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ."
                     }
                 }
             }
@@ -127,7 +112,10 @@ pipeline
                 // script {
                 //     CustomImage.push()
                 // }
-                powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
+                docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                {
+                    powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"   
+                }
             }
         }
     }
