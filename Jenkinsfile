@@ -50,7 +50,7 @@ pipeline
         {
             steps
             {
-                powershell 'compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update'
+                powershell "compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update"
                 archiveArtifacts artifacts: 'publish.zip'    
             }
         }
