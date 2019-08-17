@@ -29,7 +29,7 @@ pipeline
         nugetRepository = 'https://api.nuget.org/v3/index.json'
 
         restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
-        buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n"
+        buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore"
 
         artifactsDirectory = "MyArtifacts"
     }
@@ -77,28 +77,28 @@ pipeline
                 powershell(script: "dotnet publish ${env.APPLICATION_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
             }
         }
-        stage('Archive')
-        {
-            steps
-            {
-                // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
-                powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
-                archiveArtifacts artifacts: 'publish.zip'    
-            }
-        }
-        stage('Retrieve artifact')
-        {
-            steps
-            {
-                copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
-                powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
-            }
-        }
+        // stage('Archive')
+        // {
+        //     steps
+        //     {
+        //         // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
+        //         powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
+        //         archiveArtifacts artifacts: 'publish.zip'    
+        //     }
+        // }
+        // stage('Retrieve artifact')
+        // {
+        //     steps
+        //     {
+        //         copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
+        //         powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
+        //     }
+        // }
         stage('Set-up for docker CustomImage creation')
         {
             steps
             {
-                powershell "mv Dockerfile ${env.artifactsDirectory}"
+                powershell "mv Dockerfile ${env.APPLICATION_NAME}/${env.artifactsDirectory}"
             }
         }
         stage('Build Custom Docker Image')
@@ -107,7 +107,7 @@ pipeline
             {
                 script 
                 {
-                    dir("${env.artifactsDirectory}") 
+                    dir("${env.APPLICATION_NAME}/${env.artifactsDirectory}") 
                     {
                         docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                         {
