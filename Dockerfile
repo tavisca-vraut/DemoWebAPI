@@ -8,4 +8,4 @@ EXPOSE 80
 
 ARG LaunchFile="Default.dll"
 
-CMD ["dotnet", LaunchFile]
+CMD ["dotnet", ${LaunchFile}]
