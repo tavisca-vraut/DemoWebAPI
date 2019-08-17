@@ -94,13 +94,16 @@ pipeline
             // {
             //     powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.artifactsDirectory}/"
             // }
-            script
+            steps
             {
-                dir("${env.artifactsDirectory}")
+                script
                 {
-                    docker.withRegistry('docker.io', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                    dir("${env.artifactsDirectory}")
                     {
-                        CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                        docker.withRegistry('docker.io', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                        {
+                            CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                        }
                     }
                 }
             }
