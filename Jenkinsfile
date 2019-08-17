@@ -81,6 +81,7 @@ pipeline
                 powershell "docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/"
             }
         }
+        stage('Push Docker image to DockerIO registry')
         // stage('Build image') 
         // {
         //     app = docker.build("getintodevops/hellonode")
