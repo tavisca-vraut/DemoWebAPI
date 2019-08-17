@@ -1,3 +1,6 @@
+// Globals
+def image
+
 pipeline 
 {
     agent any
@@ -5,7 +8,7 @@ pipeline
     {
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
-        string(name: 'PROJECT_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
+        string(name: 'APPLICATION_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
         string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
         string(name: 'DOCKER_HUB_USERNAME')
         string(name: 'DOCKER_HUB_PASSWORD')
@@ -15,6 +18,7 @@ pipeline
     }
     environment
     {
+        // DON'T EDIT UNLESS YOU KNOW WHAT YOU ARE DOING
         nugetRepository = 'https://api.nuget.org/v3/index.json'
 
         restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
@@ -50,15 +54,15 @@ pipeline
         {
             steps 
             {
-                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
+                powershell(script: "dotnet publish ${env.APPLICATION_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
             }
         }
         stage('Archive')
         {
             steps
             {
-                // powershell "echo 'compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update'"
-                powershell "compress-archive ${env.PROJECT_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
+                // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
+                powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
                 archiveArtifacts artifacts: 'publish.zip'    
             }
         }
@@ -79,10 +83,16 @@ pipeline
         }
         stage('Build docker image')
         {
-            steps
+            // steps
+            // {
+            //     powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.artifactsDirectory}/"
+            // }
+            dir("${env.artifactsDirectory}")
             {
-                // powershell "echo 'docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} artifacts/'"
-                powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ${env.artifactsDirectory}/"
+                docker.withRegistry('docker.io', 'docker-hub-credentials') 
+                {
+                    image = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                }
             }
         }
         stage('Push Docker image to DockerIO registry')
@@ -90,23 +100,11 @@ pipeline
             steps
             {
                 // powershell "echo 'docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io'"
-                powershell "docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io"
-                powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
+                // powershell "docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io"
+                // powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
+                image.push()
             }
         }
-        // stage('Build image') 
-        // {
-        //     app = docker.build("getintodevops/hellonode")
-        // }
-
-        // stage('Push image') 
-        // {
-        //     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') 
-        //     {
-        //         app.push("${env.BUILD_NUMBER}")
-        //         app.push("latest")
-        //     }
-        // }
     }
     post
     {
