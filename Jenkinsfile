@@ -113,6 +113,7 @@ pipeline
                         docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                         {
                             powershell "echo '${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}'"
+                            powershell "ls"
                             CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
                         }
                     }
@@ -128,11 +129,11 @@ pipeline
             }
         }
     }
-    // post
-    // {
-    //     always
-    //     {
-    //         deleteDir()
-    //     }
-    // }
+    post
+    {
+        always
+        {
+            deleteDir()
+        }
+    }
 }
