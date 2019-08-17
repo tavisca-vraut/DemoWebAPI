@@ -1,19 +1,26 @@
+/*
+ Add your docker credentials to jenkins credentials manager. Don't forget to give it an ID.
+ When, prompted for ID in parameters, enter it.
+*/
+
+
 // Globals
-def image
+def CustomImage
 
 pipeline 
 {
     agent any
     parameters 
     {
+        string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
+
+        string(name: 'APPLICATION_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
-        string(name: 'APPLICATION_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
-        string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
-        string(name: 'DOCKER_HUB_USERNAME')
-        string(name: 'DOCKER_HUB_PASSWORD')
+        
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'demo-web-app-test')
         string(name: 'DOCKER_IMAGE_TAG', defaultValue: 'latest')
+        string(name: 'DOCKER_HUB_CREDENTIALS_ID', defaultValue: 'docker-hub-credentials')
         choice(name: 'JOB', choices:  ['Test' , 'Build', 'Create Image'])
     }
     environment
@@ -74,14 +81,14 @@ pipeline
                 powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
             }
         }
-        stage('Set-up for docker image creation')
+        stage('Set-up for docker CustomImage creation')
         {
             steps
             {
                 powershell "mv Dockerfile ${env.artifactsDirectory}"
             }
         }
-        stage('Build docker image')
+        stage('Build docker CustomImage')
         {
             // steps
             // {
@@ -89,20 +96,23 @@ pipeline
             // }
             dir("${env.artifactsDirectory}")
             {
-                docker.withRegistry('docker.io', 'docker-hub-credentials') 
+                docker.withRegistry('docker.io', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                 {
-                    image = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
+                    CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
                 }
             }
         }
-        stage('Push Docker image to DockerIO registry')
+        stage('Push Docker CustomImage to DockerIO registry')
         {
             steps
             {
                 // powershell "echo 'docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io'"
                 // powershell "docker login -u ${env.DOCKER_HUB_USERNAME} -p ${env.DOCKER_HUB_PASSWORD} docker.io"
                 // powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
-                image.push()
+                script
+                {
+                    CustomImage.push()
+                }
             }
         }
     }
