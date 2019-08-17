@@ -6,7 +6,7 @@ COPY . /host
 
 EXPOSE 80
 
-ARG LaunchFile="Default.dll"
+ARG APPLICATION_NAME="Default"
 
 # ENTRYPOINT ["dotnet", ${LaunchFile}]
 ENTRYPOINT ["dotnet", "DemoWebApp.dll"]
