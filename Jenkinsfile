@@ -18,9 +18,10 @@ pipeline
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
         string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
         
-        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'demo-web-app-test')
-        string(name: 'DOCKER_IMAGE_TAG', defaultValue: 'latest')
+        string(name: 'DOCKER_HUB_USERNAME', defaultValue: 'vighnesh153')
         string(name: 'DOCKER_HUB_CREDENTIALS_ID', defaultValue: 'docker-hub-credentials')
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'demo-web-app-test', description: 'Name of the image to be created')
+        string(name: 'DOCKER_IMAGE_TAG', defaultValue: 'latest', description: 'Release information')
         choice(name: 'JOB', choices:  ['Test' , 'Build', 'Create Image'])
     }
     environment
@@ -111,11 +112,8 @@ pipeline
                     {
                         docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                         {
-                            withCredentials([usernamePassword(credentialsId: "${env.DOCKER_HUB_CREDENTIALS_ID}", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) 
-                            {
-                                powershell "echo 'Hello, ${USERNAME} . Please work'"
-                                CustomImage = docker.build("${USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
-                            }
+                            powershell "echo '${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}'"
+                            CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
                         }
                     }
                 }
