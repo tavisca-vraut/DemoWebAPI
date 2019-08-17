@@ -70,6 +70,13 @@ pipeline
                 powershell 'mv Dockerfile artifacts'
             }
         }
+        stage('Build docker image')
+        {
+            steps
+            {
+                powershell 'docker -h'
+            }
+        }
         // stage('Build image') 
         // {
         //     app = docker.build("getintodevops/hellonode")
