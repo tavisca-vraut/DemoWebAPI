@@ -29,8 +29,8 @@ pipeline
         // DON'T EDIT UNLESS YOU KNOW WHAT YOU ARE DOING
         nugetRepository = 'https://api.nuget.org/v3/index.json'
 
-        // restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
-        // buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore"
+        restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
+        buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore"
 
         artifactsDirectory = "MyArtifacts"
     }
@@ -41,10 +41,8 @@ pipeline
             steps
             {    
                 powershell(script: "echo '*********Starting Restore and Build***************'")
-                // powershell(script: '$env:restoreCommand')
-                // powershell(script: '$env:buildCommand')
-                powershell(script: "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}")
-                powershell(script: "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n --no-restore")
+                powershell(script: '$env:restoreCommand')
+                powershell(script: '$env:buildCommand')
                 powershell(script: "echo '***************Recovery Finish********************'")
             }
         }
@@ -101,7 +99,7 @@ pipeline
                     {
                         // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
                         // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}", " .")
-                        powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} ."
+                        powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} . --build-arg LaunchFile='${env.APPLICATION_NAME}\.dll'"
                     }
                 }
             }
@@ -109,11 +107,8 @@ pipeline
         stage('Push Docker CustomImage to DockerIO registry') 
         {
             steps {
-                // script {
-                //     CustomImage.push()
-                // }
-                script
-                {
+                script {
+                    // CustomImage.push()
                     docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
                     {
                         powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"   

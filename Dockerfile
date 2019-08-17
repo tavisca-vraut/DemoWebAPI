@@ -6,4 +6,6 @@ COPY . /host
 
 EXPOSE 80
 
-CMD ["dotnet", "DemoWebApp.dll"]
+ARG LaunchFile
+
+CMD ["dotnet", LaunchFile]
