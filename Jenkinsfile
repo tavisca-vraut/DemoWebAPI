@@ -5,15 +5,16 @@ pipeline
     {
         string(name: 'REPO_PATH', defaultValue: 'https://github.com/tavisca-vraut/DemoWebAPI.git')
         string(name: 'SOLUTION_PATH', defaultValue: 'DemoWebApp.sln')
-        string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj')
+        string(name: 'TEST_PATH', defaultValue: 'DemoTest/DemoTest.csproj', description: 'Relative Path of the .csproj file of test project')
         string(name: 'PROJECT_NAME', defaultValue: 'DemoWebApp', description: 'Name of the project that you want to test/deploy/etc.')
+        string(name: 'JOB_NAME', defaultValue: 'Demo-WebApi-Test', description: 'Name of the current job that is going to run the pipeline.')
         choice(name: 'JOB', choices:  ['Test' , 'Build'])
     }
     environment
     {
         nugetRepository = 'https://api.nuget.org/v3/index.json'
-        restoreCommand = 'dotnet restore $env:SOLUTION_PATH --source $env:nugetRepository'
-        buildCommand = 'dotnet build $env:SOLUTION_PATH -p:Configuration=release -v:n'
+        restoreCommand = "dotnet restore ${env.SOLUTION_PATH} --source ${env.nugetRepository}"
+        buildCommand = "dotnet build ${env.SOLUTION_PATH} -p:Configuration=release -v:n"
     }
     stages 
     {
@@ -22,8 +23,8 @@ pipeline
             steps
             {    
                 powershell(script: "echo '*********Starting Restore and Build***************'")
-                powershell(script: '$env:restoreCommand')
-                powershell(script: '$env:buildCommand')
+                powershell(script: "${env.restoreCommand}")
+                powershell(script: "${env.buildCommand}")
                 powershell(script: "echo '***************Recovery Finish********************'")
             }
         }
@@ -36,21 +37,21 @@ pipeline
             
             steps 
             {
-                powershell(script: 'dotnet test $env:TEST_PATH')
+                powershell(script: "dotnet test ${env.TEST_PATH}")
             }
         }
         stage('Publish') 
         {
             steps 
             {
-                powershell(script: 'dotnet publish $env:PROJECT_NAME -c Release -o artifacts')
+                powershell(script: "dotnet publish ${env.PROJECT_NAME} -c Release -o artifacts")
             }
         }
         stage('Archive')
         {
             steps
             {
-                powershell "echo 'compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update'"
+                // powershell "echo 'compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update'"
                 powershell "compress-archive ${env.PROJECT_NAME}/artifacts publish.zip -Update"
                 archiveArtifacts artifacts: 'publish.zip'    
             }
