@@ -77,6 +77,7 @@ pipeline
         {
             steps
             {
+                powershell "echo 'docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} atrifacts/'"
                 powershell "docker build -t ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} atrifacts/"
             }
         }
