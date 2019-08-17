@@ -82,6 +82,12 @@ pipeline
             }
         }
         stage('Push Docker image to DockerIO registry')
+        {
+            steps
+            {
+                powershell "docker push ${env.DOCKER_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
+            }
+        }
         // stage('Build image') 
         // {
         //     app = docker.build("getintodevops/hellonode")
