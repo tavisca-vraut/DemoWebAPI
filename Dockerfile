@@ -11,4 +11,4 @@ ENV HOST_THIS_APP=${APPLICATION_NAME_TO_BE_HOSTED}
 
 # ENTRYPOINT ["dotnet", ${LaunchFile}]
 # ENTRYPOINT ["dotnet", "${HOST_THIS_APP}.dll"]
-RUN dotnet ${HOST_THIS_APP}.dll
+CMD dotnet ${HOST_THIS_APP}.dll
