@@ -40,80 +40,48 @@ pipeline
         {
             steps
             {    
+                powershell(script: 'dotnet C:/sonar/SonarScanner.MSBuild.dll begin /k:"api" /d:sonar.host.url="http://localhost:9000" /d:sonar.login="q62e7cca1ajdtw5qlp82fc75cb1ca12685b39b6x')
+             
                 powershell(script: "echo '*********Starting Restore and Build***************'")
                 powershell(script: '$env:restoreCommand')
                 powershell(script: '$env:buildCommand')
-                powershell(script: "echo '***************Recovery Finish********************'")
-            }
-        }
-        stage('Test') 
-        {
-            when
-            {
-                expression { params.JOB == 'Test'}
-            }
+                powershell(script: "echo '***************Done Restore and Build********************'")
             
-            steps 
-            {
+                powershell(script: "echo '*********Starting Test***************'")
                 powershell(script: "dotnet test ${env.TEST_PATH}")
-            }
-        }
-        stage('Publish') 
-        {
-            steps 
-            {
+                powershell(script: "echo '*********Done Testing***************'")
+            
+                powershell(script: 'dotnet c:/sonar/SonarScanner.MSBuild.dll end /d:sonar.login="q62e7cca1ajdtw5qlp82fc75cb1ca12685b39b6x"')
+             
+                powershell(script: "echo '********* Publishing... ***************'")
                 powershell(script: "dotnet publish ${env.APPLICATION_NAME} -c Release -o ${env.artifactsDirectory} --no-restore")
-            }
-        }
-        // stage('Archive')
-        // {
-        //     steps
-        //     {
-        //         // powershell "echo 'compress-archive ${env.APPLICATION_NAME}/artifacts publish.zip -Update'"
-        //         powershell "compress-archive ${env.APPLICATION_NAME}/${env.artifactsDirectory}/*.* publish.zip -Update"
-        //         archiveArtifacts artifacts: 'publish.zip'    
-        //     }
-        // }
-        // stage('Retrieve artifact')
-        // {
-        //     steps
-        //     {
-        //         copyArtifacts filter: 'publish.zip', projectName: 'Demo-WebApi-Test'
-        //         powershell(script: "expand-archive publish.zip ./${env.artifactsDirectory} -Force")
-        //     }
-        // }
-        stage('Set-up for docker CustomImage creation')
-        {
-            steps
-            {
+                powershell(script: "echo '********* Published ***************'")
+            
+                powershell(script: "echo '********* Move dockerfile to the artifacts directory for ease ***************'")
                 powershell "mv Dockerfile ${env.APPLICATION_NAME}/${env.artifactsDirectory}"
-            }
-        }
-        stage('Build Custom Docker Image')
-        {
-            steps 
-            {
+                powershell(script: "echo '********* Move complete ***************'")
+            
+                powershell(script: "echo '********* Build docker image and push to DockerIO registry ***************'")
                 script 
                 {
                     dir("${env.APPLICATION_NAME}/${env.artifactsDirectory}") 
                     {
-                        // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}")
-                        // CustomImage = docker.build("${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}", " .")
                         powershell "docker build -t ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG} --build-arg APPLICATION_NAME_TO_BE_HOSTED=${env.APPLICATION_NAME} ."
+
+                        docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
+                        {
+                            powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"   
+                        }
                     }
                 }
+                powershell(script: "echo '********* Docker immage build succeded and pushed to registry ***************'")
             }
         }
-        stage('Push Docker CustomImage to DockerIO registry') 
+        stage('Deloy')
         {
-            steps {
-                script {
-                    // CustomImage.push()
-                    docker.withRegistry('https://www.docker.io/', "${env.DOCKER_HUB_CREDENTIALS_ID}") 
-                    {
-                        powershell "docker push ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"   
-                    }
-                }
+            steps
+            {
+                powershell "docker run -p 7001:80 ${env.DOCKER_HUB_USERNAME}/${env.DOCKER_IMAGE_NAME}:${env.DOCKER_IMAGE_TAG}"
             }
         }
     }
